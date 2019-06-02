@@ -72,7 +72,7 @@ if ($%s) {
 FORMAT;
         $condition = $ifNode->getCondition();
         $ifNodes = $this->generateLines($ifNode->getIfNodes());
-        $elseNodes = $this->generateLines($ifNode->getIfNodes());
+        $elseNodes = $this->generateLines($ifNode->getElseNodes());
         return sprintf($format, $condition, implode("", $ifNodes), implode("", $elseNodes));
     }
 
