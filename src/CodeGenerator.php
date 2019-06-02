@@ -1,5 +1,7 @@
 <?php
 
+namespace MyTemplate;
+
 require_once dirname(__FILE__) . '/Node.php';
 
 class CodeGenerator
@@ -14,17 +16,30 @@ class CodeGenerator
      */
     private $nodes;
 
+    /**
+     * CodeGenerator constructor.
+     * @param array $nodes
+     */
     public function __construct(array $nodes)
     {
         $this->index = 0;
         $this->nodes = $nodes;
     }
 
+    /**
+     * @return array
+     * @throws SyntaxError
+     */
     public function generate()
     {
         return $this->generateLines($this->nodes);
     }
 
+    /**
+     * @param array $nodes
+     * @return array
+     * @throws SyntaxError
+     */
     private function generateLines(array $nodes)
     {
         $lines = [];
@@ -50,6 +65,10 @@ class CodeGenerator
         return $lines;
     }
 
+    /**
+     * @param PlainString $node
+     * @return string
+     */
     private function generateString(PlainString $node): string
     {
         $format = <<<FORMAT
@@ -61,6 +80,11 @@ FORMAT;
         return sprintf($format, $node->getValue());
     }
 
+    /**
+     * @param IfNode $ifNode
+     * @return string
+     * @throws SyntaxError
+     */
     private function generateIf(IfNode $ifNode): string
     {
         $format = <<<FORMAT
@@ -76,13 +100,12 @@ FORMAT;
         return sprintf($format, $condition, implode("", $ifNodes), implode("", $elseNodes));
     }
 
+    /**
+     * @param ForNode $node
+     * @return string
+     */
     private function generateFor(ForNode $node): string
     {
 
-    }
-
-    private function current()
-    {
-        return $this->nodes[$this->index];
     }
 }

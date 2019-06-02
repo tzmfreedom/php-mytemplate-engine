@@ -1,5 +1,7 @@
 <?php
 
+namespace MyTemplate;
+
 require_once dirname(__FILE__) . '/Token.php';
 require_once dirname(__FILE__) . '/Node.php';
 

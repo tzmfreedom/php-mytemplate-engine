@@ -1,5 +1,7 @@
 <?php
 
-class EofException extends Exception
+namespace MyTemplate;
+
+class EofException extends \Exception
 {
 }

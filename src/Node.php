@@ -1,5 +1,7 @@
 <?php
 
+namespace MyTemplate;
+
 class PlainString
 {
     /**

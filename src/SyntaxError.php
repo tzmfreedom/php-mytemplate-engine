@@ -1,5 +1,7 @@
 <?php
 
-class SyntaxError extends Exception
+namespace MyTemplate;
+
+class SyntaxError extends \Exception
 {
 }

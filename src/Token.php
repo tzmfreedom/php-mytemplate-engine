@@ -1,5 +1,7 @@
 <?php
 
+namespace MyTemplate;
+
 class Token {
     const TYPE_IF = 1;
     const TYPE_ELSE = 2;
