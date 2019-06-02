@@ -2,7 +2,31 @@
 
 namespace MyTemplate;
 
-class PlainString
+interface Node {
+    public function getType(): string;
+}
+
+class Identifier implements Node
+{
+    private $value;
+
+    public function __construct(string $value)
+    {
+        $this->value = $value;
+    }
+
+    public function getType(): string
+    {
+        return 'IDENTIFIER';
+    }
+
+    public function getValue(): string
+    {
+        return $this->value;
+    }
+}
+
+class PlainString implements Node
 {
     /**
      * @var string
@@ -18,18 +42,24 @@ class PlainString
         $this->value = $value;
     }
 
-    public function getType()
+    /**
+     * @return string
+     */
+    public function getType(): string
     {
         return 'STRING';
     }
 
+    /**
+     * @return string
+     */
     public function getValue()
     {
         return $this->value;
     }
 }
 
-class IfNode
+class IfNode implements Node
 {
     /**
      * @var string
@@ -59,33 +89,50 @@ class IfNode
         $this->elseNodes = $elseNodes;
     }
 
-    public function getType()
+    /**
+     * @return string
+     */
+    public function getType(): string
     {
         return 'IF';
     }
 
+    /**
+     * @return string
+     */
     public function getCondition()
     {
         return $this->condition;
     }
 
+    /**
+     * @return array
+     */
     public function getIfNodes()
     {
         return $this->ifNodes;
     }
 
+    /**
+     * @return array
+     */
     public function getElseNodes()
     {
         return $this->elseNodes;
     }
 }
 
-class ForNode
+class ForNode implements Node
 {
     /**
      * @var string
      */
     private $expression;
+
+    /**
+     * @var string
+     */
+    private $variable;
 
     /**
      * @var array
@@ -95,16 +142,42 @@ class ForNode
     /**
      * ForNode constructor.
      * @param string $expression
+     * @param string $variable
      * @param array $nodes
      */
-    public function __construct(string $expression, array $nodes)
+    public function __construct(string $expression, string $variable, array $nodes)
     {
         $this->expression = $expression;
+        $this->variable = $variable;
         $this->nodes = $nodes;
     }
 
-    public function getType()
+    /**
+     * @return string
+     */
+    public function getType(): string
     {
         return 'FOR';
+    }
+
+    /**
+     * @return string
+     */
+    public function getExpression(): string
+    {
+        return $this->expression;
+    }
+
+    public function getVariable(): string
+    {
+        return $this->variable;
+    }
+
+    /**
+     * @return array
+     */
+    public function getNodes(): array
+    {
+        return $this->nodes;
     }
 }

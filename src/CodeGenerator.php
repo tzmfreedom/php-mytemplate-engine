@@ -54,6 +54,9 @@ class CodeGenerator
                 case 'STRING':
                     $line = $this->generateString($node);
                     break;
+                case 'IDENTIFIER':
+                    $line = $this->generateIdentifier($node);
+                    break;
                 default:
                     $line = null;
             }
@@ -77,7 +80,7 @@ echo <<<EOS
 EOS;
 
 FORMAT;
-        return sprintf($format, $node->getValue());
+        return sprintf($format, trim($node->getValue()));
     }
 
     /**
@@ -106,6 +109,36 @@ FORMAT;
      */
     private function generateFor(ForNode $node): string
     {
+        $format = <<<FORMAT
+foreach ($%s as $%s) {
+%s
+}
+FORMAT;
 
+        $expression = $node->getExpression();
+        $loopVar = $node->getVariable();
+        $nodes = $this->generateLines($node->getNodes());
+        return sprintf($format, $expression, $loopVar, implode('', $nodes));
+    }
+
+    /**
+     * @param Identifier $node
+     * @return string
+     */
+    private function generateIdentifier(Identifier $node): string
+    {
+        $values = explode('.', $node->getValue());
+        if (count($values) === 1) {
+            $value = $values[0];
+        } else {
+            $tmp = [$values[0]];
+            for ($i = 1; $i < count($values); $i++) {
+                $first = mb_strtoupper(mb_substr($values[$i], 0, 1));
+                $remain = mb_substr($values[$i], 1);
+                $tmp[] = 'get' . $first . $remain . '()';
+            }
+            $value = implode('->', $tmp);
+        }
+        return sprintf('echo $%s;', $value);
     }
 }

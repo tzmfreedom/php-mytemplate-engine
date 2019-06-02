@@ -8,6 +8,14 @@ require_once dirname(__FILE__) . '/SyntaxError.php';
 
 class Lexer
 {
+    const ASCII_TOKENS = [
+        '+',
+        '-',
+        '*',
+        '/',
+        '%',
+        ':'
+    ];
     /**
      * @var int
      */
@@ -83,14 +91,24 @@ class Lexer
      * @throws EofException
      * @throws SyntaxError
      */
-    private function parseExpression()
+    private function parseExpression(): array
     {
         $char = $this->current();
         if ($char !== '{') {
             throw new SyntaxError();
         }
-        $this->index++;
-        $char = $this->current();
+        $char = $this->next();
+        if ($char === '%') {
+            $token = $this->parseIdentifier();
+            if ($this->current() !== '%') {
+                throw new SyntaxError();
+            }
+            $char = $this->next();
+            if ($char !== '}') {
+                throw new SyntaxError();
+            }
+            return [$token];
+        }
         if ($char !== '{') {
             throw new SyntaxError();
         }
@@ -132,22 +150,52 @@ class Lexer
         $value = '';
         while (true) {
             $char = mb_substr($this->src, $this->index, 1);
-            if (in_array($char, [' ', '}'])) {
-                switch (mb_strtoupper($value)) {
-                    case 'IF':
-                        return new Token(Token::TYPE_IF, $value);
-                    case 'ELSE':
-                        return new Token(Token::TYPE_ELSE, $value);
-                    case 'FOR':
-                        return new Token(Token::TYPE_FOR, $value);
-                    case 'END':
-                        return new Token(Token::TYPE_END, $value);
-                    default:
-                        return new Token(Token::TYPE_IDENT, $value);
+            if (in_array($char, self::ASCII_TOKENS)) {
+                if ($value === '') {
+                    $type = ord($char);
+                    $this->index++;
+                    return new Token($type, $type);
                 }
+                return $this->reserveToken($value);
+            } else if (in_array($char, [' ', '}'])) {
+                return $this->reserveToken($value);
             }
             $value .= $char;
             $this->index++;
+        }
+    }
+
+    private function parseIdentifier()
+    {
+        $this->next();
+        $this->skipSpaces();
+        $char = $this->current();
+        $value = '';
+        while (true) {
+            if (in_array($char, [' ', '%', '}'])) {
+                $this->skipSpaces();
+                return new Token(Token::TYPE_IDENT, $value);
+            } else if (in_array($char, self::ASCII_TOKENS)) {
+                throw new SyntaxError();
+            }
+            $value .= $char;
+            $char = $this->next();
+        }
+    }
+
+    private function reserveToken(string $value): Token
+    {
+        switch (mb_strtoupper($value)) {
+            case 'IF':
+                return new Token(Token::TYPE_IF, $value);
+            case 'ELSE':
+                return new Token(Token::TYPE_ELSE, $value);
+            case 'FOR':
+                return new Token(Token::TYPE_FOR, $value);
+            case 'END':
+                return new Token(Token::TYPE_END, $value);
+            default:
+                return new Token(Token::TYPE_IDENT, $value);
         }
     }
 
@@ -161,5 +209,11 @@ class Lexer
             throw new EofException();
         }
         return mb_substr($this->src, $this->index, 1);
+    }
+
+    private function next()
+    {
+        $this->index++;
+        return $this->current();
     }
 }

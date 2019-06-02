@@ -26,9 +26,9 @@ class Parser
     public function parse()
     {
         $nodes = [];
+        $token = $this->current();
         while (true) {
             try {
-                $token = $this->current();
                 $node = $this->parseNode($token);
             } catch (EofException $e) {
                 break;
@@ -38,7 +38,11 @@ class Parser
             } else {
                 break;
             }
-            $this->index++;
+            try {
+                $token = $this->next();
+            } catch (EofException $e) {
+                break;
+            }
         }
         return $nodes;
     }
@@ -50,6 +54,10 @@ class Parser
                 return new PlainString($token->getValue());
             case Token::TYPE_IF:
                 return $this->parseIf();
+            case Token::TYPE_FOR:
+                return $this->parseFor();
+            case Token::TYPE_IDENT:
+                return new Identifier($token->getValue());
             default:
                 return null;
         }
@@ -59,19 +67,18 @@ class Parser
     {
         $token = $this->current();
         if (!$token->isType(Token::TYPE_IF)) {
-            throw new Exception('logic exception');
+            throw new \Exception('logic exception');
         }
-        $this->index++;
-        $token = $this->current();
+        $token = $this->next();
         if (!$token->isType(Token::TYPE_IDENT)) {
             throw new SyntaxError('token `ident` expected');
         }
         $ident = $token->getValue();
-        $this->index++;
+        $this->next();
         $ifNodes = $this->parse();
         $token = $this->current();
         if ($token->isType(Token::TYPE_ELSE)) {
-            $this->index++;
+            $this->next();
             $elseNodes = $this->parse();
             $token = $this->current();
             if ($token->isType(Token::TYPE_END)) {
@@ -88,7 +95,29 @@ class Parser
 
     private function parseFor()
     {
-
+        $token = $this->current();
+        if (!$token->isType(Token::TYPE_FOR)) {
+            throw new Exception('logic exception');
+        }
+        $variable = $this->next();
+        if (!$variable->isType(Token::TYPE_IDENT)) {
+            throw new SyntaxError('token `ident` expected');
+        }
+        $token = $this->next();
+        if (!$token->isAsciiType(':')) {
+            throw new SyntaxError('token `ident` expected');
+        }
+        $expression = $this->next();
+        if (!$expression->isType(Token::TYPE_IDENT)) {
+            throw new SyntaxError('token `ident` expected');
+        }
+        $this->next();
+        $nodes = $this->parse();
+        $token = $this->current();
+        if (!$token->isType(Token::TYPE_END)) {
+            throw new SyntaxError('token `end` expected');
+        }
+        return new ForNode($expression->getValue(), $variable->getValue(), $nodes);
     }
 
     private function current(): Token
@@ -101,6 +130,7 @@ class Parser
 
     private function next(): Token
     {
-        return $this->tokens[$this->index+1];
+        $this->index++;
+        return $this->current();
     }
 }

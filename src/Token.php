@@ -3,12 +3,12 @@
 namespace MyTemplate;
 
 class Token {
-    const TYPE_IF = 1;
-    const TYPE_ELSE = 2;
-    const TYPE_END = 3;
-    const TYPE_FOR = 4;
-    const TYPE_IDENT = 5;
-    const TYPE_STRING = 6;
+    const TYPE_IF = 256;
+    const TYPE_ELSE = self::TYPE_IF+1;
+    const TYPE_END = self::TYPE_ELSE+1;
+    const TYPE_FOR = self::TYPE_END+1;
+    const TYPE_IDENT = self::TYPE_FOR+1;
+    const TYPE_STRING = self::TYPE_IDENT+1;
 
     const TYPE_MAPPER = [
         self::TYPE_IF => 'IF',
@@ -69,6 +69,11 @@ class Token {
     public function isType(int $type): bool
     {
         return $this->type === $type;
+    }
+
+    public function isAsciiType(string $type): bool
+    {
+        return $this->isType(ord($type));
     }
 }
 
