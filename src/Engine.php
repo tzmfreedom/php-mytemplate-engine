@@ -31,8 +31,8 @@ class Engine
             $this->renderFromCache($cachePath, $params);
             return;
         }
-        $src = file_get_contents($filePath);
-        $this->renderString($src, $params);
+        $code = $this->compile($filePath);
+        $this->evaluate($code, $params);
     }
 
     /**
@@ -44,24 +44,35 @@ class Engine
     public function renderString($src, $params = [])
     {
         $_code = $this->generateCode($src);
-        extract($params);
-        eval($_code);
+        $this->evaluate($_code, $params);
     }
 
     /**
      * @param string $filePath
      * @param string|null $cachePath
+     * @return string
      * @throws EofException
      * @throws SyntaxError
      */
     public function compile(string $filePath, ?string $cachePath = null)
     {
         if ($cachePath === null) {
-            $cachePath = $this->getCacheFilePath();
+            $cachePath = $this->getCacheFilePath($filePath);
         }
         $src = file_get_contents($filePath);
         $code = $this->generateCode($src);
         file_put_contents($cachePath, $code);
+        return $code;
+    }
+
+    /**
+     * @param string $_code
+     * @param array $params
+     */
+    private function evaluate(string $_code, array $params)
+    {
+        extract($params);
+        eval($_code);
     }
 
     /**
@@ -71,8 +82,7 @@ class Engine
     private function renderFromCache(string $cacheFilePath, array $params)
     {
         $_code = file_get_contents($cacheFilePath);
-        extract($params);
-        eval($_code);
+        $this->evaluate($_code, $params);
     }
 
     /**
