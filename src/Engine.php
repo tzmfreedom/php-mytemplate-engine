@@ -21,6 +21,7 @@ class Engine
     /**
      * @param $filePath
      * @param array $params
+     * @return false|string|void
      * @throws EofException
      * @throws SyntaxError
      */
@@ -32,19 +33,20 @@ class Engine
             return;
         }
         $code = $this->compile($filePath);
-        $this->evaluate($code, $params);
+        return $this->evaluate($code, $params);
     }
 
     /**
      * @param $src
      * @param array $params
+     * @return false|string
      * @throws EofException
      * @throws SyntaxError
      */
     public function renderString($src, $params = [])
     {
         $_code = $this->generateCode($src);
-        $this->evaluate($_code, $params);
+        return $this->evaluate($_code, $params);
     }
 
     /**
@@ -68,21 +70,26 @@ class Engine
     /**
      * @param string $_code
      * @param array $params
+     * @return false|string
      */
     private function evaluate(string $_code, array $params)
     {
         extract($params);
+        $context = $this->getContext();
+        ob_start();
         eval($_code);
+        return ob_get_clean();
     }
 
     /**
      * @param string $cacheFilePath
      * @param array $params
+     * @return false|string
      */
     private function renderFromCache(string $cacheFilePath, array $params)
     {
         $_code = file_get_contents($cacheFilePath);
-        $this->evaluate($_code, $params);
+        return $this->evaluate($_code, $params);
     }
 
     /**
@@ -110,5 +117,11 @@ class Engine
         $generator = new CodeGenerator($nodes);
         $lines = $generator->generate();
         return implode(PHP_EOL, $lines);
+    }
+
+    private function getContext(array $nodes): array
+    {
+        $resolver = new IncludeResolver();
+        return $resolver->resolve($nodes);
     }
 }

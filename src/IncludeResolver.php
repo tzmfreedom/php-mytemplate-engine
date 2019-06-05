@@ -4,13 +4,8 @@ namespace MyTemplate;
 
 require_once dirname(__FILE__) . '/Node.php';
 
-class CodeGenerator
+class IncludeResolver
 {
-    /**
-     * @var int
-     */
-    private $index;
-
     /**
      * @var array
      */
@@ -28,7 +23,6 @@ class CodeGenerator
      */
     public function __construct(array $nodes, array $context)
     {
-        $this->index = 0;
         $this->nodes = $nodes;
         $this->context = $context;
     }
@@ -37,9 +31,9 @@ class CodeGenerator
      * @return array
      * @throws SyntaxError
      */
-    public function generate()
+    public function resolve()
     {
-        return $this->generateLines($this->nodes);
+        return $this->resolveLines($this->nodes);
     }
 
     /**
@@ -47,7 +41,7 @@ class CodeGenerator
      * @return array
      * @throws SyntaxError
      */
-    private function generateLines(array $nodes)
+    private function resolveLines(array $nodes)
     {
         $lines = [];
         foreach ($nodes as $node) {

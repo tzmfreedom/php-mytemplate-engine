@@ -9,6 +9,8 @@ class Token {
     const TYPE_FOR = self::TYPE_END+1;
     const TYPE_IDENT = self::TYPE_FOR+1;
     const TYPE_STRING = self::TYPE_IDENT+1;
+    const TYPE_INCLUDE = self::TYPE_STRING+1;
+    const TYPE_STRING_LITERAL = self::TYPE_INCLUDE+1;
 
     const TYPE_MAPPER = [
         self::TYPE_IF => 'IF',
@@ -17,6 +19,8 @@ class Token {
         self::TYPE_FOR => 'FOR',
         self::TYPE_IDENT => 'IDENT',
         self::TYPE_STRING => 'STRING',
+        self::TYPE_INCLUDE => 'INCLUDE',
+        self::TYPE_STRING_LITERAL => 'STRING_LITERAL',
     ];
 
     /**

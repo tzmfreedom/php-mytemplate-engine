@@ -58,6 +58,8 @@ class Parser
                 return $this->parseFor();
             case Token::TYPE_IDENT:
                 return new Identifier($token->getValue());
+            case Token::TYPE_INCLUDE:
+                return $this->parseInclude();
             default:
                 return null;
         }
@@ -118,6 +120,19 @@ class Parser
             throw new SyntaxError('token `end` expected');
         }
         return new ForNode($expression->getValue(), $variable->getValue(), $nodes);
+    }
+
+    private function parseInclude()
+    {
+        $token = $this->current();
+        if (!$token->isType(Token::TYPE_INCLUDE)) {
+            throw new \Exception('logic exception');
+        }
+        $token = $this->next();
+        if (!$token->isType(Token::TYPE_IDENT) && !$token->isType(Token::TYPE_STRING_LITERAL)) {
+            throw new SyntaxError('token `ident` expected');
+        }
+        return new IncludeNode($token->getValue());
     }
 
     private function current(): Token

@@ -181,3 +181,36 @@ class ForNode implements Node
         return $this->nodes;
     }
 }
+
+class IncludeNode implements Node
+{
+    /**
+     * @var N
+     */
+    private $expression;
+
+    /**
+     * ForNode constructor.
+     * @param Node $expression
+     */
+    public function __construct(Node $expression)
+    {
+        $this->expression = $expression;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType(): string
+    {
+        return 'INCLUDE';
+    }
+
+    /**
+     * @return string
+     */
+    public function getExpression()
+    {
+        return $this->expression;
+    }
+}

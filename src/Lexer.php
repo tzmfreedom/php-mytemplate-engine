@@ -194,7 +194,12 @@ class Lexer
                 return new Token(Token::TYPE_FOR, $value);
             case 'END':
                 return new Token(Token::TYPE_END, $value);
+            case 'INCLUDE':
+                return new Token(Token::TYPE_INCLUDE, $value);
             default:
+                if (preg_match('\A\'([^\']*)\'\z', $value, $match)) {
+                    return new Token(Token::TYPE_STRING_LITERAL, $match[1]);
+                }
                 return new Token(Token::TYPE_IDENT, $value);
         }
     }
