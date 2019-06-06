@@ -60,3 +60,13 @@ include other template
 {{ include 'other.my' }}
 ```
 
+lookup getter property
+```
+{{ foo.bar }}
+```
+
+This is compiled to
+```php
+$foo->getBar();
+```
+So foo variable should be implemented public `getBar()` method.
