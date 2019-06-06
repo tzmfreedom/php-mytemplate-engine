@@ -10,7 +10,7 @@
         "symfony/templating": "^4.3"
     },
     "autoload": {
-        "psr4": {
+        "psr-4": {
             "MyTemplate\\": "src/"
         }
     }
