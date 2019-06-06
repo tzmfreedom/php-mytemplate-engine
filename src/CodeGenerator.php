@@ -4,6 +4,10 @@ namespace MyTemplate;
 
 require_once dirname(__FILE__) . '/Node.php';
 
+/**
+ * Class CodeGenerator
+ * @package MyTemplate
+ */
 class CodeGenerator
 {
     /**
@@ -56,7 +60,12 @@ class CodeGenerator
         return $lines;
     }
 
-    private function evaluateNode($node)
+    /**
+     * @param Node $node
+     * @return string|null
+     * @throws SyntaxError
+     */
+    private function evaluateNode(Node $node)
     {
         switch ($node->getType()) {
             case 'IF':
@@ -121,6 +130,7 @@ FORMAT;
     /**
      * @param ForNode $node
      * @return string
+     * @throws SyntaxError
      */
     private function generateFor(ForNode $node): string
     {
@@ -161,7 +171,6 @@ FORMAT;
     /**
      * @param IncludeNode $node
      * @return string
-     * @throws SyntaxError
      */
     private function generateInclude(IncludeNode $node): string
     {

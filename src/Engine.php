@@ -7,6 +7,10 @@ require_once dirname(__FILE__) . '/IncludeResolver.php';
 require_once dirname(__FILE__) . '/Lexer.php';
 require_once dirname(__FILE__) . '/Parser.php';
 
+/**
+ * Class Engine
+ * @package MyTemplate
+ */
 class Engine
 {
     /**

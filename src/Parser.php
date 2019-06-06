@@ -5,6 +5,10 @@ namespace MyTemplate;
 require_once dirname(__FILE__) . '/Token.php';
 require_once dirname(__FILE__) . '/Node.php';
 
+/**
+ * Class Parser
+ * @package MyTemplate
+ */
 class Parser
 {
     /**
@@ -17,12 +21,21 @@ class Parser
      */
     private $index;
 
+    /**
+     * Parser constructor.
+     * @param array $tokens
+     */
     public function __construct(array $tokens)
     {
         $this->tokens = $tokens;
         $this->index = 0;
     }
 
+    /**
+     * @return array
+     * @throws EofException
+     * @throws SyntaxError
+     */
     public function parse()
     {
         $nodes = [];
@@ -47,6 +60,12 @@ class Parser
         return $nodes;
     }
 
+    /**
+     * @param $token
+     * @return ForNode|Identifier|IfNode|IncludeNode|PlainString|null
+     * @throws SyntaxError
+     * @throws EofException
+     */
     public function parseNode($token)
     {
         switch ($token->getType()) {
@@ -65,6 +84,11 @@ class Parser
         }
     }
 
+    /**
+     * @return IfNode
+     * @throws EofException
+     * @throws SyntaxError
+     */
     private function parseIf()
     {
         $token = $this->current();
@@ -95,6 +119,11 @@ class Parser
         }
     }
 
+    /**
+     * @return ForNode
+     * @throws EofException
+     * @throws SyntaxError
+     */
     private function parseFor()
     {
         $token = $this->current();
@@ -122,6 +151,11 @@ class Parser
         return new ForNode($expression->getValue(), $variable->getValue(), $nodes);
     }
 
+    /**
+     * @return IncludeNode
+     * @throws EofException
+     * @throws SyntaxError
+     */
     private function parseInclude()
     {
         $token = $this->current();
@@ -136,6 +170,10 @@ class Parser
         return new IncludeNode($token->getValue());
     }
 
+    /**
+     * @return Token
+     * @throws EofException
+     */
     private function current(): Token
     {
         if ($this->index >= count($this->tokens)) {
@@ -144,6 +182,10 @@ class Parser
         return $this->tokens[$this->index];
     }
 
+    /**
+     * @return Token
+     * @throws EofException
+     */
     private function next(): Token
     {
         $this->index++;

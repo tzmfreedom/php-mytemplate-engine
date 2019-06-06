@@ -6,6 +6,10 @@ require_once dirname(__FILE__) . '/Token.php';
 require_once dirname(__FILE__) . '/EofException.php';
 require_once dirname(__FILE__) . '/SyntaxError.php';
 
+/**
+ * Class Lexer
+ * @package MyTemplate
+ */
 class Lexer
 {
     const ASCII_TOKENS = [
@@ -165,6 +169,11 @@ class Lexer
         }
     }
 
+    /**
+     * @return Token
+     * @throws EofException
+     * @throws SyntaxError
+     */
     private function parseIdentifier()
     {
         $this->next();
@@ -183,6 +192,10 @@ class Lexer
         }
     }
 
+    /**
+     * @param string $value
+     * @return Token
+     */
     private function reserveToken(string $value): Token
     {
         switch (mb_strtoupper($value)) {
@@ -216,6 +229,10 @@ class Lexer
         return mb_substr($this->src, $this->index, 1);
     }
 
+    /**
+     * @return EofException|string
+     * @throws EofException
+     */
     private function next()
     {
         $this->index++;

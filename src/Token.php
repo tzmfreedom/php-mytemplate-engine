@@ -2,6 +2,10 @@
 
 namespace MyTemplate;
 
+/**
+ * Class Token
+ * @package MyTemplate
+ */
 class Token {
     const TYPE_IF = 256;
     const TYPE_ELSE = self::TYPE_IF+1;
@@ -75,6 +79,10 @@ class Token {
         return $this->type === $type;
     }
 
+    /**
+     * @param string $type
+     * @return bool
+     */
     public function isAsciiType(string $type): bool
     {
         return $this->isType(ord($type));
