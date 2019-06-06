@@ -1,0 +1,12 @@
+{
+    "name": "mtajitsu/php-mytemplate-engine",
+    "authors": [
+        {
+            "name": "tzmfreedom",
+            "email": "makoto_tajitsu@hotmail.co.jp"
+        }
+    ],
+    "require": {
+        "symfony/templating": "^4.3"
+    }
+}
