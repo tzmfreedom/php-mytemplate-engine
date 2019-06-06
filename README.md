@@ -20,6 +20,18 @@ $engine = new \MyTemplate\Engine();
 echo $engine->render("sample.my", ['xxx' => 'yyy']);
 ```
 
+MyTemplate\Engine cache compiled template by default.
+If you don't want to cache, you can specify NULL to constructor argument.
+```php
+new \MyTemplate\Engine(null);
+```
+
+The cache directory is `cache` by default.
+If you change cache directory, you can specify string directory path to constructor argument.
+```php
+new \MyTemplate\Engine('/tmp');
+```
+
 ## Template Syntax
 
 output variable
@@ -47,3 +59,4 @@ include other template
 ```
 {{ include 'other.my' }}
 ```
+
