@@ -38,7 +38,7 @@ class Engine implements EngineInterface
      * @throws EofException
      * @throws SyntaxError
      */
-    public function render($filePath, $params = [])
+    public function render($filePath, array $params = [])
     {
         $cachePath = $this->getCacheFilePath($filePath);
         if ($cachePath !== null && file_exists($cachePath)) {
