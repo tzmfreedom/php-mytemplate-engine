@@ -2,6 +2,8 @@
 
 namespace MyTemplate;
 
+use Symfony\Component\Templating\EngineInterface;
+
 require_once dirname(__FILE__) . '/CodeGenerator.php';
 require_once dirname(__FILE__) . '/IncludeResolver.php';
 require_once dirname(__FILE__) . '/Lexer.php';
@@ -11,8 +13,10 @@ require_once dirname(__FILE__) . '/Parser.php';
  * Class Engine
  * @package MyTemplate
  */
-class Engine
+class Engine implements EngineInterface
 {
+    const EXT = '.my';
+
     /**
      * @var string
      */
@@ -78,6 +82,16 @@ class Engine
             file_put_contents($cachePath, $code);
         }
         return $code;
+    }
+
+    public function supports($name)
+    {
+        return 'my' === pathinfo($name, PATHINFO_EXTENSION);
+    }
+
+    public function exists($name)
+    {
+        return file_exists($name . self::EXT);
     }
 
     /**
