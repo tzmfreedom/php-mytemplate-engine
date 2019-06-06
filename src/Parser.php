@@ -129,8 +129,9 @@ class Parser
             throw new \Exception('logic exception');
         }
         $token = $this->next();
-        if (!$token->isType(Token::TYPE_IDENT) && !$token->isType(Token::TYPE_STRING_LITERAL)) {
-            throw new SyntaxError('token `ident` expected');
+        if (!$token->isType(Token::TYPE_STRING_LITERAL)) {
+            var_dump($token);
+            throw new SyntaxError('token `STRING_LITERAL` expected');
         }
         return new IncludeNode($token->getValue());
     }

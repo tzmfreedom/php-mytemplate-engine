@@ -157,10 +157,21 @@ FORMAT;
         return sprintf('echo $%s;', $value);
     }
 
+
+    /**
+     * @param IncludeNode $node
+     * @return string
+     * @throws SyntaxError
+     */
     private function generateInclude(IncludeNode $node): string
     {
-        $file = $this->evaluateNode($node->getExpression());
-        $engine = new Engine();
-        $engine->render($file, []);
+        $format = <<<FORMAT
+echo <<<EOS
+%s
+EOS;
+
+FORMAT;
+
+        return sprintf($format, $this->context[$node->getFile()]);
     }
 }

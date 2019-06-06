@@ -185,17 +185,17 @@ class ForNode implements Node
 class IncludeNode implements Node
 {
     /**
-     * @var N
+     * @var string
      */
-    private $expression;
+    private $file;
 
     /**
      * ForNode constructor.
-     * @param Node $expression
+     * @param string $file
      */
-    public function __construct(Node $expression)
+    public function __construct(string $file)
     {
-        $this->expression = $expression;
+        $this->file = $file;
     }
 
     /**
@@ -209,8 +209,8 @@ class IncludeNode implements Node
     /**
      * @return string
      */
-    public function getExpression()
+    public function getFile()
     {
-        return $this->expression;
+        return $this->file;
     }
 }

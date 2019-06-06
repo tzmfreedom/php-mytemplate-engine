@@ -2,6 +2,11 @@
 
 namespace MyTemplate;
 
+require_once dirname(__FILE__) . '/CodeGenerator.php';
+require_once dirname(__FILE__) . '/IncludeResolver.php';
+require_once dirname(__FILE__) . '/Lexer.php';
+require_once dirname(__FILE__) . '/Parser.php';
+
 class Engine
 {
     /**
@@ -13,7 +18,7 @@ class Engine
      * Engine constructor.
      * @param string $cacheDir
      */
-    public function __construct(string $cacheDir = './cache')
+    public function __construct(?string $cacheDir = './cache')
     {
         $this->cacheDir = $cacheDir;
     }
@@ -28,9 +33,8 @@ class Engine
     public function render($filePath, $params = [])
     {
         $cachePath = $this->getCacheFilePath($filePath);
-        if (file_exists($cachePath)) {
-            $this->renderFromCache($cachePath, $params);
-            return;
+        if ($cachePath !== null && file_exists($cachePath)) {
+            return $this->renderFromCache($cachePath, $params);
         }
         $code = $this->compile($filePath);
         return $this->evaluate($code, $params);
@@ -58,12 +62,17 @@ class Engine
      */
     public function compile(string $filePath, ?string $cachePath = null)
     {
-        if ($cachePath === null) {
+        if ($this->cacheDir !== null && $cachePath === null) {
             $cachePath = $this->getCacheFilePath($filePath);
         }
         $src = file_get_contents($filePath);
         $code = $this->generateCode($src);
-        file_put_contents($cachePath, $code);
+        if ($this->cacheDir !== null) {
+            if (!file_exists(dirname($cachePath))) {
+                mkdir(dirname($cachePath), 0777, true);
+            }
+            file_put_contents($cachePath, $code);
+        }
         return $code;
     }
 
@@ -75,7 +84,6 @@ class Engine
     private function evaluate(string $_code, array $params)
     {
         extract($params);
-        $context = $this->getContext();
         ob_start();
         eval($_code);
         return ob_get_clean();
@@ -114,14 +122,15 @@ class Engine
         $parser = new Parser($tokens);
         $nodes = $parser->parse();
 
-        $generator = new CodeGenerator($nodes);
+        $resolver = new IncludeResolver($nodes);
+        $files = $resolver->resolve();
+        $context = [];
+        foreach ($files as $file) {
+            $context[$file] = $this->render($file, []);
+        }
+
+        $generator = new CodeGenerator($nodes, $context);
         $lines = $generator->generate();
         return implode(PHP_EOL, $lines);
-    }
-
-    private function getContext(array $nodes): array
-    {
-        $resolver = new IncludeResolver();
-        return $resolver->resolve($nodes);
     }
 }
