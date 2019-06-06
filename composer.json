@@ -8,5 +8,10 @@
     ],
     "require": {
         "symfony/templating": "^4.3"
+    },
+    "autoload": {
+        "psr4": {
+            "": "src/"
+        }
     }
 }

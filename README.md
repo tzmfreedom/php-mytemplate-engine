@@ -4,7 +4,10 @@ PHP Template Engine
 
 ## Install
 
-WIP
+```
+composer config repositories.tzmfreedom/php-mytemplate-engine vcs https://github.com/tzmfreedom/php-mytemplate-engine
+composer require tzmfreedom/php-mytemplate-engine:dev-master
+```
 
 ## Usage
 
